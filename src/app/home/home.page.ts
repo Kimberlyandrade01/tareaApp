@@ -1,11 +1,24 @@
-import { Component, NgModule } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonButton, IonList } from '@ionic/angular/standalone';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController, ToastController } from '@ionic/angular'; 
-import {} from 'ionicons/icons';
-import {addIcons}from 'ionicons'
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonContent, 
+  IonItem, 
+  IonInput, 
+  IonButton, 
+  IonList, 
+  IonIcon,
+  AlertController // ⬅️ Correcto: AlertController para Standalone
+} from '@ionic/angular/standalone'; 
+import { addIcons } from 'ionicons';
+import { addOutline, newspaperOutline } from 'ionicons/icons'; 
+// NOTA: Se eliminó la importación de ToastController si no se usa.
 
+// CLAVE PARA LOCALSTORAGE: Debe estar aquí para que toda la clase la reconozca.
+const STORAGE_KEY = 'lista_de_tareas'; 
 
 @Component({
   selector: 'app-home',
@@ -13,44 +26,99 @@ import {addIcons}from 'ionicons'
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,
     CommonModule,
-    FormsModule,
+    FormsModule, 
+    IonHeader, 
+    IonToolbar, 
+    IonTitle, 
+    IonContent, 
+    IonItem, 
+    IonInput, // ⬅️ Agregué IonInput que faltaba en los imports
+    IonButton, 
+    IonList,
+    IonIcon
   ],
 })
-export class HomePage {
+export class HomePage implements OnInit { 
+    
   nuevaTarea: string = '';
   tareas: string[] = [];
-  // 1. AlertController ya inyectado en el constructor
+
   constructor(private alertController: AlertController) {
-    addIcons({addOutline: 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'});
+    // Inicialización de íconos
+    addIcons({newspaperOutline, addOutline}); 
   }
+
+  // Se ejecuta al iniciar el componente. Llama a la carga de datos persistentes.
+  ngOnInit() {
+    this.cargarTareas();
+  }
+
+  // ===================================
+  // LÓGICA DE PERSISTENCIA (LocalStorage)
+  // ===================================
+
+  // Carga las tareas desde LocalStorage
+  cargarTareas() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    
+    // Si encuentra datos guardados, los convierte de JSON string a array
+    if (data) {
+      this.tareas = JSON.parse(data);
+    } 
+    // Si no hay datos (la primera vez), el array 'this.tareas' se mantiene vacío.
+  }
+
+  // Guarda las tareas en LocalStorage
+  guardarTareas() {
+    // Convierte el array 'tareas' a una cadena JSON para guardarlo
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.tareas));
+  }
+
+  // ===================================
+  // LÓGICA DE TAREAS Y ACCIONES
+  // ===================================
 
   agregarTarea() {
     const tareaTexto = this.nuevaTarea.trim();
 
-    // Si el input está vacío, simplemente salimos de la función
     if (tareaTexto === '') {
       return;
     }
 
-    // --- 🤖 Lógica de Validación de Tarea Duplicada ---
-    // Usamos .find() para verificar si ya existe una tarea con el mismo nombre (ignorando mayúsculas/minúsculas)
     const tareaDuplicada = this.tareas.find(tareaExistente => 
         tareaExistente.toLowerCase() === tareaTexto.toLowerCase()
     );
 
     if (tareaDuplicada) {
-      // 🛑 Tarea duplicada: Llama a la nueva función de alerta
       this.mostrarAlertaDuplicada(tareaTexto);
     } else {
-      // ✅ Tarea única: Agrégala
       this.tareas.push(tareaTexto);
       this.nuevaTarea = ''; // Limpiar el input
+      this.guardarTareas(); // ⬅️ PERSISTENCIA: ¡Guardar después de agregar!
+      this.mostrarAlertaGuardado(); // ⬅️ ALERTA: Notificación de éxito
     }
   }
 
-  // 2. Nuevo método para mostrar la alerta
+  eliminarTarea(index: number) {
+    this.tareas.splice(index, 1);
+    this.guardarTareas(); // ⬅️ PERSISTENCIA: ¡Guardar después de eliminar!
+  }
+
+  // ===================================
+  // LÓGICA DE ALERTAS
+  // ===================================
+
+  async mostrarAlertaGuardado() {
+    const alert = await this.alertController.create({
+      header: '¡ÉXITO!',
+      message: 'La tarea ha sido agregada correctamente.',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
   async mostrarAlertaDuplicada(tarea: string) {
     const alert = await this.alertController.create({
       header: 'AVISO', 
@@ -60,20 +128,4 @@ export class HomePage {
 
     await alert.present();
   }
-  // --- Fin de la Lógica de Validación ---
-
-  eliminarTarea(index: number) {
-    this.tareas.splice(index, 1);
-  }
 }
-
-
-@NgModule({
-  imports: [
-    CommonModule,
-    FormsModule, // 👈 agregar aquí
-    IonicModule,
-    HomePage
-  ]
-})
-export class HomePageModule {}

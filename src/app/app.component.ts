@@ -10,3 +10,11 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 export class AppComponent {
   constructor() {}
 }
+
+export class HomePage {
+  message = '';
+
+  // opción simple: alert del navegador
+  showMessage() {
+    alert('¡Botón funcionando correctamente! 🎉');
+  }}

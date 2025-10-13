@@ -14,7 +14,7 @@ import {
   AlertController // ⬅️ Correcto: AlertController para Standalone
 } from '@ionic/angular/standalone'; 
 import { addIcons } from 'ionicons';
-import { addOutline, newspaperOutline } from 'ionicons/icons'; 
+import { addOutline, newspaperOutline, trash } from 'ionicons/icons'; 
 // NOTA: Se eliminó la importación de ToastController si no se usa.
 
 // CLAVE PARA LOCALSTORAGE: Debe estar aquí para que toda la clase la reconozca.
@@ -39,14 +39,17 @@ const STORAGE_KEY = 'lista_de_tareas';
     IonIcon
   ],
 })
-export class HomePage implements OnInit { 
+export class HomePage implements OnInit {
+showMessage() {
+throw new Error('Method not implemented.');
+} 
     
   nuevaTarea: string = '';
   tareas: string[] = [];
 
   constructor(private alertController: AlertController) {
     // Inicialización de íconos
-    addIcons({newspaperOutline, addOutline}); 
+    addIcons({trash,newspaperOutline,addOutline}); 
   }
 
   // Se ejecuta al iniciar el componente. Llama a la carga de datos persistentes.
@@ -129,3 +132,6 @@ export class HomePage implements OnInit {
     await alert.present();
   }
 }
+
+
+

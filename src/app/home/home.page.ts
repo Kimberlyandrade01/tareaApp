@@ -9,15 +9,20 @@ import { addIcons } from 'ionicons';
 import { addOutline, newspaperOutline, trash } from 'ionicons/icons'; 
 // NOTA: Se eliminó la importación de ToastController si no se usa.
 
+
+
 // CLAVE PARA LOCALSTORAGE: Debe estar aquí para que toda la clase la reconozca.
 const STORAGE_KEY = 'lista_de_tareas'; 
+
+
+
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonReorder, IonLabel, 
+  imports: [IonReorder, IonLabel,
     CommonModule,
     FormsModule,
     IonHeader,
@@ -32,6 +37,11 @@ const STORAGE_KEY = 'lista_de_tareas';
     IonReorderGroup
 ],
 })
+
+
+
+
+
 export class HomePage implements OnInit {
 confirmarEliminarTarea(_t24: number) {
 throw new Error('Method not implemented.');
@@ -53,7 +63,6 @@ throw new Error('Method not implemented.');
 
 
 
-
   
   // ===================================
   // LÓGICA DE PERSISTENCIA (LocalStorage)
@@ -70,11 +79,19 @@ throw new Error('Method not implemented.');
     // Si no hay datos (la primera vez), el array 'this.tareas' se mantiene vacío.
   }
 
+
+
+
+
   // Guarda las tareas en LocalStorage
   guardarTareas() {
     // Convierte el array 'tareas' a una cadena JSON para guardarlo
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.tareas));
   }
+
+
+
+
 
   // ===================================
   // LÓGICA DE TAREAS Y ACCIONES
@@ -132,6 +149,10 @@ reordenarTareas(event: any) {
 }
 
 
+
+
+
+
   // ===================================
   // LÓGICA DE ALERTAS
   // ===================================
@@ -158,5 +179,5 @@ reordenarTareas(event: any) {
 
 
 
-//Nueva funcion//
+
 

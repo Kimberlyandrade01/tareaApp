@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+
 import { 
   IonHeader, 
   IonToolbar, 
@@ -40,9 +42,9 @@ const STORAGE_KEY = 'lista_de_tareas';
   ],
 })
 export class HomePage implements OnInit {
-showMessage() {
+confirmarEliminarTarea(_t24: number) {
 throw new Error('Method not implemented.');
-} 
+}
     
   nuevaTarea: string = '';
   tareas: string[] = [];
@@ -57,6 +59,11 @@ throw new Error('Method not implemented.');
     this.cargarTareas();
   }
 
+
+
+
+
+  
   // ===================================
   // LÓGICA DE PERSISTENCIA (LocalStorage)
   // ===================================
@@ -85,9 +92,9 @@ throw new Error('Method not implemented.');
   agregarTarea() {
     const tareaTexto = this.nuevaTarea.trim();
 
-    if (tareaTexto === '') {
-      return;
-    }
+    if (tareaTexto === '') {return;} // Evita agregar tareas vacías
+
+    // Verifica si la tarea ya existe (ignorando mayúsculas/minúsculas)
 
     const tareaDuplicada = this.tareas.find(tareaExistente => 
         tareaExistente.toLowerCase() === tareaTexto.toLowerCase()
@@ -103,10 +110,29 @@ throw new Error('Method not implemented.');
     }
   }
 
-  eliminarTarea(index: number) {
-    this.tareas.splice(index, 1);
-    this.guardarTareas(); // ⬅️ PERSISTENCIA: ¡Guardar después de eliminar!
-  }
+async eliminarTarea(index: number) {
+  const alert = await this.alertController.create({
+    header: 'Confirmar eliminación',
+    message: '¿Estás segura de que deseas eliminar esta tarea?',
+    buttons: [
+      {
+        text: 'Cancelar',
+        role: 'cancel',
+        cssClass: 'secondary'
+      },
+      {
+        text: 'Aceptar',
+        handler: () => {
+          this.tareas.splice(index, 1);
+          this.guardarTareas(); // guardar después de eliminar
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
+
 
   // ===================================
   // LÓGICA DE ALERTAS
@@ -118,8 +144,7 @@ throw new Error('Method not implemented.');
       message: 'La tarea ha sido agregada correctamente.',
       buttons: ['OK']
     });
-
-    await alert.present();
+     await alert.present();
   }
 
   async mostrarAlertaDuplicada(tarea: string) {
@@ -133,4 +158,7 @@ throw new Error('Method not implemented.');
   }
 }
 
+
+
+//Nueva funcion//
 

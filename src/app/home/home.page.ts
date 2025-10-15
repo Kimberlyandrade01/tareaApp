@@ -3,18 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 
-import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonContent, 
-  IonItem, 
-  IonInput, 
-  IonButton, 
-  IonList, 
-  IonIcon,
-  AlertController // ⬅️ Correcto: AlertController para Standalone
-} from '@ionic/angular/standalone'; 
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonButton, IonList, IonIcon, AlertController // ⬅️ Correcto: AlertController para Standalone
+, IonReorderGroup, IonLabel, IonReorder } from '@ionic/angular/standalone'; 
 import { addIcons } from 'ionicons';
 import { addOutline, newspaperOutline, trash } from 'ionicons/icons'; 
 // NOTA: Se eliminó la importación de ToastController si no se usa.
@@ -27,19 +17,20 @@ const STORAGE_KEY = 'lista_de_tareas';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonReorder, IonLabel, 
     CommonModule,
-    FormsModule, 
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
-    IonContent, 
-    IonItem, 
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonItem,
     IonInput, // ⬅️ Agregué IonInput que faltaba en los imports
-    IonButton, 
+    IonButton,
     IonList,
-    IonIcon
-  ],
+    IonIcon,
+    IonReorderGroup
+],
 })
 export class HomePage implements OnInit {
 confirmarEliminarTarea(_t24: number) {
@@ -131,6 +122,13 @@ async eliminarTarea(index: number) {
   });
 
   await alert.present();
+}
+
+reordenarTareas(event: any) {
+  const itemMove = this.tareas.splice(event.detail.from, 1)[0];
+  this.tareas.splice(event.detail.to, 0, itemMove);
+  event.detail.complete();
+  this.guardarTareas(); // 🔄 Guardar el nuevo orden en localStorage
 }
 
 

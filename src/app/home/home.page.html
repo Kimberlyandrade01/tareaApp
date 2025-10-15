@@ -11,13 +11,21 @@
     <ion-icon name="newspaper-outline"></ion-icon>
   </ion-item>
 
-  <ion-list>
+<ion-list>
+  <ion-reorder-group disabled="false" (ionItemReorder)="reordenarTareas($event)">
     <ion-item *ngFor="let tarea of tareas; let i = index">
-      {{ tarea }}
-      <ion-button color="danger" (click)="eliminarTarea(i)" slot="end">X</ion-button>
+      <ion-label>{{ tarea }}</ion-label>
+
+      <!-- Botón "X" para eliminar -->
+      <ion-button fill="clear" color="danger" slot="end" (click)="eliminarTarea(i)">
+        ✖
+      </ion-button>
+
+      <!-- Ícono de arrastre -->
+      <ion-reorder slot="end"></ion-reorder>
     </ion-item>
-  </ion-list>
-</ion-content>
+  </ion-reorder-group>
+</ion-list>
 
 
 
